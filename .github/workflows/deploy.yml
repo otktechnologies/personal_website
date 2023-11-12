@@ -13,6 +13,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: us-east-1
       AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      DIST: build
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,5 +27,5 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync . s3://${{ env.AWS_S3_BUCKET }} --delete 
+          aws s3 sync --delete ${{ env.DIST }}  s3://${{ env.AWS_S3_BUCKET }} 
           aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CF_DISTRIBUTION_ID }} --paths "/*"
