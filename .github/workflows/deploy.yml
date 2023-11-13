@@ -9,8 +9,6 @@ jobs:
     name: Deploy HTML to S3
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: us-east-1
       AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       DIST: build
@@ -28,7 +26,12 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
+      - name: Adding logs
+        run: |
+          echo "Deploying to S3"
+          echo "AWS_S3_BUCKET: ${{ env.AWS_S3_BUCKET }}"
+
       - name: Deploy to S3
         run: |
-          aws s3 sync --delete ${{ env.DIST }}  s3://${{ env.AWS_S3_BUCKET }} 
+          aws s3 sync --delete ${{ env.DIST }} s3://${{ env.AWS_S3_BUCKET }} 
           aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CF_DISTRIBUTION_ID }} --paths "/*"
