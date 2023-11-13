@@ -14,15 +14,18 @@ jobs:
       AWS_DEFAULT_REGION: us-east-1
       AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
       DIST: build
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::379247470989:role/GitHubAction-AssumeRoleWithAction
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
       - name: Deploy to S3
