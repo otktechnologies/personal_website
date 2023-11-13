@@ -26,12 +26,7 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
-      - name: Adding logs
-        run: |
-          echo "Deploying to S3"
-          echo "AWS_S3_BUCKET: ${{ env.AWS_S3_BUCKET }}"
-
       - name: Deploy to S3
         run: |
-          aws s3 sync --delete ${{ env.DIST }} s3://${{ env.AWS_S3_BUCKET }} 
+          aws s3 sync . --delete  s3://${{ env.AWS_S3_BUCKET }} 
           aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CF_DISTRIBUTION_ID }} --paths "/*"
